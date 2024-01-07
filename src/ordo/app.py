@@ -149,13 +149,14 @@ with tab_usage:
                 st.stop()
             files_nodups.append(f)
             filenames.append(f.name)
-        if files:
+        files = files_nodups
+        if len(files) > 1:
             st.success("All images uploaded (you can still add/delete if you want).")
             if st.session_state["step1_expanded"]:
                 st.session_state["step1_expanded"] = False
                 st.rerun()
 
-    if files:
+    if len(files) > 1:
         if "known_pairs" not in st.session_state:
             st.session_state["known_pairs"] = set()
             st.session_state["skipped_pairs"] = set()
