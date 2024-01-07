@@ -31,6 +31,14 @@ with tab_intro:
     some ridiculously priced items from your fuss.
     """
     st.markdown(ordo_definition)
+    tab0_align_html = """
+    <style>
+    div#tabs-bui3-tabpanel-0 p {
+        text-align: justify;
+    }
+    </style>
+    """
+    st.markdown(tab0_align_html, unsafe_allow_html=True)
 
 
 def get_content(b64paths, idx_left, idx_right):
@@ -102,14 +110,14 @@ with tab_usage:
         """
 
         col1, col2 = st.columns(2)
-        align_html = """
+        column_align_html = """
         <style>
         div[data-testid="column"] {
             text-align: justify;
         }
         </style>
         """
-        st.markdown(align_html, unsafe_allow_html=True)
+        st.markdown(column_align_html, unsafe_allow_html=True)
         with col1:
             st.markdown(uploader_desc1)
         with col2:
