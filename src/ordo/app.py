@@ -139,7 +139,10 @@ with tab_usage:
                     min_value=0,
                     key=f.name,
                 )
-                st.image(get_b64path(f.getvalue()))
+                st.markdown(
+                    '<img src="{}" width=100%>'.format(get_b64path(f.getvalue())),
+                    unsafe_allow_html=True,
+                )
                 if p is not None:
                     st.session_state["price_map"][f.name] = p
                     st.rerun()
