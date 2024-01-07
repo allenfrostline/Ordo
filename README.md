@@ -29,7 +29,7 @@ or the explicit file:
 ```
 git clone https://github.com/allenfrostline/ordo.git
 cd ordo/
-streamlit run src/ordo/app.py --server.runOnSave true
+streamlit run src/ordo/app.py --server.runOnSave true --theme.base light
 ```
 
 ## Running tests

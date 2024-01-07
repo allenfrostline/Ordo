@@ -163,7 +163,6 @@ with tab_usage:
                             ^ st.session_state["curr_pair"][1]
                             ^ idx_better
                         )
-                        print(f"{idx_better} > {idx_worse}")
                         better_than = deepcopy(st.session_state["better_than"])
                         if idx_better not in better_than:
                             better_than[idx_better] = set()

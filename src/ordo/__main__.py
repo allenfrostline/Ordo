@@ -8,5 +8,9 @@ if __name__ == "__main__":
         "streamlit",
         "run",
         str(pathlib.Path(__file__).parent.resolve() / "app.py"),
+        "--server.runOnSave",
+        "true",
+        "--theme.base",
+        "light",
     ]
     sys.exit(stcli.main())
