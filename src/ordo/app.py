@@ -48,7 +48,7 @@ def get_content(b64paths, idx_left, idx_right):
         .image-pair {{
             margin-block: 0;
             display: grid;
-            grid-template-columns: 1fr 1fr 150px;
+            grid-template-columns: 1fr 1fr 50px;
         }}
         .image-pair img {{
             object-fit: cover;
@@ -61,11 +61,13 @@ def get_content(b64paths, idx_left, idx_right):
             margin: auto 0;
         }}
         a#skip .skip-hover {{
+            vertical-align: 2px;
             visibility: hidden;
             color: white;
             background-color: #9c9c9c;
             border-radius: 5px;
             padding: 1px 4px 3px 5px;
+            margin-left:-125px;
         }}
         a#skip:hover .skip-hover {{
             visibility: visible;
