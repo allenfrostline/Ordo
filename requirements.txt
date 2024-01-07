@@ -1,0 +1,7 @@
+numpy
+pandas
+scipy
+setuptools
+st_click_detector
+streamlit
+watchdog
