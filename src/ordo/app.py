@@ -87,32 +87,76 @@ with tab_usage:
         label="Step 1: upload your images 🛍️",
         expanded=st.session_state["step1_expanded"],
     ):
+        uploader_desc1 = """
+        If possible, please make sure the file names are in the format of
+        :red[**name**].:green[**price**].:violet[**suffix**] where :green[**price**] is an integer,
+        and :violet[**suffix**] is any of common image types like :violet[**png**], :violet[**jpg**]
+        etc. :red[**nike_airforce44**].:green[**250**].:violet[**png**], for example, would be a
+        totally valid file name.
+        """
+
+        uploader_desc2 = """
+        If you cannot specify the file names in this format (say you're using a phone),
+        :rainbow[**it's totally fine**] — you will be prompted for the prices after
+        uploading the images.
+        """
+
+        col1, col2 = st.columns(2)
+        align_html = """
+        <style>
+        div[data-testid="column"] {
+            text-align: justify;
+        }
+        </style>
+        """
+        st.markdown(align_html, unsafe_allow_html=True)
+        with col1:
+            st.markdown(uploader_desc1)
+        with col2:
+            st.markdown(uploader_desc2)
         files = (
             st.file_uploader(
-                label=(
-                    "Please make sure the file names are in the format of "
-                    "`{brand_or_item_name}`.`{price}`.`{suffix}` where "
-                    "`price` is an integer, and `suffix` is any of common "
-                    "image types like `png`, `jpg` etc. "
-                    "For example: `nike_airforce.250.png`."
-                ),
-                accept_multiple_files=True,
+                label="upload", accept_multiple_files=True, label_visibility="collapsed"
             )
             or []
         )
-        st.session_state["step1_expanded"] = False
         filenames = []
-        files = [
-            f for f in files if (filenames := filenames + [f.name]).count(f.name) == 1
-        ]
+        files_nodups = []
+        if "price_map" not in st.session_state:
+            st.session_state["price_map"] = {}
+        for f in files:
+            if f.name in st.session_state["price_map"]:
+                name, suffix = f.name.rsplit(".", 1)
+                f.name = ".".join(
+                    [name, str(st.session_state["price_map"][f.name]), suffix]
+                )
+            if f.name in filenames:
+                continue
+            if not f.name.rsplit(".", 2)[-2].isdigit():
+                p = st.number_input(
+                    label="Enter the listed price of the shown item:",
+                    value=None,
+                    min_value=0,
+                    key=f.name,
+                )
+                st.image(get_b64path(f.getvalue()))
+                if p is not None:
+                    st.session_state["price_map"][f.name] = p
+                    st.rerun()
+                st.stop()
+            files_nodups.append(f)
+            filenames.append(f.name)
         if files:
             st.success("All images uploaded (you can still add/delete if you want).")
+            if st.session_state["step1_expanded"]:
+                st.session_state["step1_expanded"] = False
+                st.rerun()
 
     if files:
         if "known_pairs" not in st.session_state:
             st.session_state["known_pairs"] = set()
             st.session_state["skipped_pairs"] = set()
-            st.session_state["better_than"] = dict()
+            st.session_state["better_than"] = {}
 
         b64paths = [get_b64path(f.getvalue()) for f in files]
         titles = []
@@ -333,7 +377,6 @@ with tab_usage:
                     assert len(titles) == len(better_than)
                     df_summary = pd.DataFrame(
                         {
-                            "name": [titles[i] for i in better_than],
                             "price": [prices[i] for i in better_than],
                             "value": values,
                             "preview": [b64paths[i] for i in better_than],
@@ -365,17 +408,25 @@ with tab_usage:
                         ),
                         column_config={
                             "preference": st.column_config.Column(
-                                "❤️ Your Preference", help="Smaller means better!"
+                                label="❤️ Preference",
+                                help="Smaller means better!",
+                                width="small",
                             ),
-                            "name": st.column_config.Column("👔 Name"),
-                            "price": st.column_config.Column("💰 Listed Price"),
-                            "value": st.column_config.Column("✒️ Your Estimate"),
+                            "price": st.column_config.Column(
+                                label="💰 Listed Price", width="small"
+                            ),
+                            "value": st.column_config.Column(
+                                label="✒️ Your Estimate", width="small"
+                            ),
                             "preview": st.column_config.ImageColumn(
-                                "🖼️ Preview",
+                                label="🖼️ Preview",
                                 help="Double click or press `SPACE` to preview larger image",
+                                width="small",
                             ),
                             "price - value": st.column_config.Column(
-                                "🔥 Price - Estimate", help="Lower means better!"
+                                label="🔥 Price - Estimate",
+                                help="Lower means better!",
+                                width="small",
                             ),
                         },
                         use_container_width=True,
